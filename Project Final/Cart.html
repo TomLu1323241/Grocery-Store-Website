@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link href="css Files/Main Project.css" rel="stylesheet"/>	
+        <link href="css Files/Cart.css" rel="stylesheet"/>
+<!--        <script type="text/javascript" src="js Files/Main Project.js"></script>-->
+        <meta charset="utf-8"/>
+    </head>
+    <body>
+		<img class="Logo" src="Images/Logo.jpg">	
+        <div id="buyNow" onclick="checkout(1)">
+        <h1 style="display: inline;">Buy!</h1>
+		<img class="CartL" src="Images/Cart.png" style="display: inline; width: 40px"/>
+        </div>
+		<style>
+		body {
+			background-image: url("background.jpg");
+		}
+		</style>
+        <table cellspacing="0" cellpadding="0" id="boughtStuff"></table>
+        <div id="spacer"></div>
+        <a href="404%20Temp.html">
+            <footer id="MainFooter">
+                <div id="centerFooter">
+                    <div class="MainFooterBlock">
+                        <h1>Quick Links</h1>
+                        <ul>
+                            <li>Help</li>
+                            <li>Flyers</li>
+                            <li>News</li>
+                        </ul>  
+                    </div>
+
+                    <div class="MainFooterBlock">
+                        <h1>More Departments</h1>
+                        <ul>
+                            <li>Gift Cards</li>
+                            <li>Insurance</li>
+                        </ul>  
+                    </div>
+
+                    <div class="MainFooterBlock">
+                        <h1>Contact Us</h1>
+                        <ul>
+                            <li>Manager</li>
+                            <li>Customer Care</li>
+                        </ul>    
+                    </div>
+
+                    <div class="MainFooterBlock">
+                        <h1>About</h1>
+                        <ul>
+                            <li>About Us</li>
+                            <li>FAQ</li>
+                            <li>Special Thanks To</li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+        </a>
+    </body>
+    <script>
+        var boughtStufftable = document.getElementById("boughtStuff");
+        var boughtStuff = JSON.parse(sessionStorage.getItem("Cart"));
+        var items = JSON.parse(sessionStorage.getItem("ALLSTUFF"));
+        var totalrow = 0;
+        
+        function changeTable(itemCodes) {
+            var stringTable = "";
+            var items = JSON.parse(sessionStorage.getItem("ALLSTUFF"));
+            totalrow = 0;
+            for (var row = 0; row < itemCodes.length; row++) {
+                totalrow++;
+                if (itemCodes[row] == undefined) {
+                    break;
+                }
+                
+                stringTable += "<tr style=\"background: rgba(255, 255, 255, 0.3);\">";
+
+                for (var col = 0; col < 3; col++) {
+                    switch (col) {
+                        case 0:
+							stringTable += "<td style=\"width: 2500px\">";
+                            stringTable += "<h2>" + items[itemCodes[row] - 1][1] + "</h2>";
+                            break;
+                        case 1:
+                            stringTable += "<td style=\"width: 200px\">";
+                            stringTable += "<p>$" + items[itemCodes[row] - 1][5] + "</p>";
+                            break;
+                        case 2:
+							stringTable += "<td style=\"min-width: 200px; text-align: center;\">";
+							stringTable += "<p onclick=\"remove(this.id)\"id=\"" + items[itemCodes[row] - 1][0] + "\" class=\"remove\">Remove</p>";
+                            break;
+                    }
+                    stringTable += "</td>";
+                }
+
+            }
+            var totalPrice = 0;
+            for (var i = 0; i < itemCodes.length; i++) {
+                try {
+                    totalPrice += parseFloat(items[itemCodes[i] - 1][5]);
+                } catch (e) {
+                    break;  
+                }
+            }
+            
+            stringTable += "<tr style=\"background: rgba(255, 255, 255, 0.3);\">";
+
+            stringTable += "<td style=\"width: 2500px\">";
+            stringTable += "<h2>All Items</h2>";
+            stringTable += "</td>";
+
+
+            stringTable += "<td style=\"width: 200px\">";
+            stringTable += "<p>$" + totalPrice + "</p>";
+            stringTable += "</td>";
+
+            stringTable += "<td style=\"min-width: 200px; text-align: center;\">";
+            stringTable += "<p onclick=\"checkout()\" class=\"remove\">Remove All</p>";
+            stringTable += "</td>";
+            
+            stringTable += "</tr>";
+            
+            return stringTable; 
+        }
+        
+        function remove(id) {
+            for (var i = 0; i < boughtStuff.length; i++) {
+                if (boughtStuff[i] == id) {
+                    boughtStuff[i] = undefined;
+                    for (var i2 = i; i2 < boughtStuff.length; i2++) {
+                        boughtStuff[i2] = boughtStuff[i2 + 1];
+                    }
+                    break;
+                }
+            }
+            sessionStorage.setItem("Cart", JSON.stringify(boughtStuff));
+            boughtStufftable.innerHTML = changeTable(boughtStuff);
+            pushFooter();
+        }
+		
+		function checkout(buy) {
+			var items = JSON.parse(sessionStorage.getItem("ALLSTUFF"));
+			for (var i = 0; i < boughtStuff.length; i++) {
+				boughtStuff[i] = undefined;
+			}
+			boughtStufftable.innerHTML = "<tr style=\"background: rgba(255, 255, 255, 0.3);\"><td style=\"width: 2500px\"><h2>All Items</h2></td><td style=\"width: 200px\"><p>$0.00</p></td><td style=\"min-width: 200px; text-align: center;\"><p onclick=\"checkout()\" class=\"remove\">Remove All</p></td>";
+			sessionStorage.setItem("Cart", JSON.stringify(""));
+            if (buy == 1) {
+                alert("You have bought everything");
+            } else {
+                alert("You have removed everything");
+            }
+            pushFooter();
+		}
+        
+        function pushFooter() {
+            var oneTable = 31;
+            if (totalrow < 8) {
+                document.getElementById("spacer").style.padding = String((8 - totalrow) * oneTable) + "px 0px";
+            }
+            console.log(totalrow)
+        }
+		
+        document.addEventListener('DOMContentLoaded', function() {
+            boughtStufftable.innerHTML = changeTable(boughtStuff);
+            pushFooter();
+        }, false);
+        
+    </script>
+</html>

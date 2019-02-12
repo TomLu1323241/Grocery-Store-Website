@@ -1,0 +1,109 @@
+<!DOCtype html>
+
+<html>
+    <style>
+        .norm {
+            background-color: black;
+            width: 30px;
+            height: 30px;
+        }
+        #body {
+            margin: 0;
+        }
+        #spacer {
+            padding: 25px;
+        }
+    </style>
+    
+    <body id="body">
+        <table cellspacing="0" cellpadding="0" id="board"></table>
+    </body>
+
+    <script>
+        var board = "";
+        
+        var snakePOS = ["44", "45", "46", "47", "57", "67", "77"];
+        
+        var nextMove = "left";
+        
+        var first = 0;
+        
+        for (var i = 0;i < 9; i++) {
+            board += "<tr>"
+            for (var i2 = 0; i2 < 9; i2++) {
+                board += "<td id=" + i + "" + i2 + " class=\"norm\">"
+                board += "</td>"
+            }
+            board += "</tr>"
+        }
+        
+        document.getElementById("board").innerHTML = board;
+        
+        document.onkeydown = checkKey;
+        
+        setInterval(changeSqur, 1000);
+        
+        var timer = setInterval(function(){ changeSqur() }, 1000);
+        
+        function changeSqur() {
+            var temp = snakePOS[snakePOS.length - 1];
+            for (var i = snakePOS.length - 2; i >= 0; i--) {
+                snakePOS[i + 1] = snakePOS[i];
+            }
+            if (nextMove == "up") {
+                snakePOS[0] = (parseInt(snakePOS[1].substring(0,1)) - 1) + snakePOS[1].substring(1,2)
+                console.log("up")
+            } else if (nextMove == "down") {
+                snakePOS[0] = (parseInt(snakePOS[1].substring(0,1)) + 1) + snakePOS[1].substring(1,2)
+                console.log("down")
+            } else if (nextMove == "left") {
+                snakePOS[0] = snakePOS[1].substring(0,1) + (parseInt(snakePOS[1].substring(1,2)) - 1)
+                console.log("left")
+            } else if (nextMove == "right") {
+                snakePOS[0] = snakePOS[1].substring(0,1) + (parseInt(snakePOS[1].substring(1,2)) + 1)
+                console.log("right")
+            }
+            console.log(snakePOS)
+            if (first == 0) {
+                for (var i = 0; i < snakePOS.length; i++) {
+                    document.getElementById(snakePOS[i]).style.backgroundColor = "white";
+                }
+            }
+            document.getElementById(0).style.backgroundColor = "white";
+            document.getElementById(temp).style.backgroundColor = "black";
+            console.log("still running")
+        }
+
+        function checkKey(e) {
+
+            e = e || window.event;
+
+            if (e.keyCode == '38') {
+                // up arrow
+                nextMove = "up";
+                console.log("up")
+            }
+            else if (e.keyCode == '40') {
+                // down arrow
+                nextMove = "down";
+                console.log("down")
+            }
+            else if (e.keyCode == '37') {
+               // left arrow
+                nextMove = "left";
+                console.log("left")
+            }
+            else if (e.keyCode == '39') {
+               // right arrow
+                nextMove = "right";
+                console.log("right")
+            } 
+            else if (e.keyCode == '13') {
+                console.log("enter working")
+                clearInterval(timer);
+            }
+
+        }
+    
+    </script>
+</html>

@@ -1,0 +1,41 @@
+#ExplainStuff {
+    float: left;
+    margin: 30px 10px;
+}
+
+#ExplainStuff h1 {
+    color: #777;
+    text-decoration-style: solid;
+}
+
+#ExplainStuff p {
+    color: grey;
+}
+
+#SideBar {
+    display: inline;
+    float: left;
+    padding: 10px
+}
+
+#SideBar ol li {
+    list-style-type: none;
+    margin: 10px 0px;
+}
+
+#SideBar ol li ::before {
+  content: counter(step-counter);
+  margin-right: 5px;
+  font-size: 80%;
+  background-color: rgb(0,200,200);
+  color: white;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 3px;
+}
+
+#SideBar ol li a {
+    text-decoration-line: none;
+    color: grey;
+    font-size: 20px;
+}

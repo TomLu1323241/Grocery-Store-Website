@@ -1,0 +1,299 @@
+<!DOCtype html>
+
+<html>
+
+    <head>
+        <link href="css Files/Main Project.css" rel="stylesheet"/>
+        <meta charset="utf-8"/>
+    </head>
+
+    <body onresize="changePadding()">
+	<style>
+	body {
+		background-image: url(background.jpg);
+		}
+	</style>
+        <header id="MainHeader">
+            <img class="logo" src="Images/Logo.jpg" onClick="sortByPrice()"/>
+        </header>
+        <div id="selectionBar">
+            
+            <div class="dropdown">
+                <p class="dropbtn shade">Categories</p>
+                <ul class="dropdown-content">
+                </ul>
+            </div>
+            
+            <div class="dropdown">
+                <p class="dropbtn shade">Alphabetical Order</p>
+                <ul class="dropdown-content">
+                    <li onClick="sortByabc(0)">A to Z</li>
+                    <li onClick="sortByabc(1)">Z to A</li>
+                </ul>
+            </div>
+            
+            <div class="dropdown">
+                <p class="dropbtn shade">Price</p>
+                <ul class="dropdown-content">
+                    <li onClick="sortByPrice(0)">Highest To Lowest</li>
+                    <li onClick="sortByPrice(1)">Lowest To Highest</li>
+                </ul>
+            </div>
+            
+            <div class="dropdown" onClick="defult()"><p class="dropbtn shade">All Items</p></div>
+            
+            <a href="Cart.html">
+            <img class="cart" src="Images/Cart.png" onClick="defult()"/>
+            </a>
+            <input id="searchBar" placeholder="Search" onClick="sortByabc(1)"/>
+            <p id="searchBarText" class="shade">Search Bar: </p>
+        </div>
+        
+        <table cellspacing="0" cellpadding="0" id="result"></table>
+        <a href="404%20Temp.html">
+            <footer id="MainFooter">
+                <div id="centerFooter">
+                    <div class="MainFooterBlock">
+                        <h1>Quick Links</h1>
+                        <ul>
+                            <li>Help</li>
+                            <li>Flyers</li>
+                            <li>News</li>
+                        </ul>  
+                    </div>
+
+                    <div class="MainFooterBlock">
+                        <h1>More Departments</h1>
+                        <ul>
+                            <li>Gift Cards</li>
+                            <li>Insurance</li>
+                        </ul>  
+                    </div>
+
+                    <div class="MainFooterBlock">
+                        <h1>Contact Us</h1>
+                        <ul>
+                            <li>Manager</li>
+                            <li>Customer Care</li>
+                        </ul>    
+                    </div>
+
+                    <div class="MainFooterBlock">
+                        <h1>About</h1>
+                        <ul>
+                            <li>About Us</li>
+                            <li>FAQ</li>
+                            <li>Special Thanks To</li>
+                        </ul>
+                    </div>
+                </div>
+            </footer>
+        </a>
+    </body>
+    
+    <script>
+        var search;
+        var result = document.getElementById("result");
+        var cart = new Array;
+        var allText2DArray = new Array;
+        var cads = new Array;
+        var allOneCad = new Array;
+        
+        function readTextFile() {
+            var allText = [];
+            var rawFile = new XMLHttpRequest();
+            rawFile.open("GET", "inventory.csv");
+            rawFile.onreadystatechange = function (){
+                if(rawFile.readyState === 4){
+                    if(rawFile.status === 200 || rawFile.status == 0){
+                        allText = rawFile.responseText.split("\n");
+                        for (var i = 0; i < allText.length; i++) {
+                            allText2DArray[i] = allText[i].split(",");  
+                        }
+                    }
+                    if(typeof(Storage) !== "undefined") {
+                        sessionStorage.setItem("ALLSTUFF", JSON.stringify(allText2DArray));//Stores the CSV file into a local storage array.
+                    } else {
+                        alert("SOMETHING RONG");
+                    }
+                }
+            }
+            rawFile.send(null);
+        }
+
+        function getCads() {
+            var temp = 0;
+            var items = JSON.parse(sessionStorage.getItem("ALLSTUFF"));
+            for (var i = 0; i < items.length; i++) {
+                for (var i2 = 0; i2 < 7; i2++) {
+                    if(String(cads[i2]) != String(items[i][2])) {
+                        cads[temp++] = items[i][2];
+                    }
+                }
+            }
+            cads = Array.from(new Set(cads));
+        }
+
+        function addcategories() {
+            var setCads = "";
+            var temp = "All Items"
+            for (var i = 0; i < cads.length; i++) {
+                setCads = setCads + "<li onClick=\"sortByCadsTable(this.innerHTML)\">" + cads[i] + "</li>"
+            }
+            document.getElementsByClassName("dropdown-content")[0].innerHTML = setCads;
+        }
+        
+        function defult() {
+            var all = new Array;
+            var items = JSON.parse(sessionStorage.getItem("ALLSTUFF"));
+            for (var i = 0; i < items.length; i++) {
+                all[i] = i + 1;
+            }
+            result.innerHTML = changeTable(all);
+        }
+        
+        function sortByCadsTable(cadID) {
+            var searchResult = new Array;
+            var stringTable = "";
+            for (var i = 0; i < allText2DArray.length; i++) {
+                if (cadID == allText2DArray[i][2]) {
+                    searchResult[searchResult.length] = allText2DArray[i][0];
+                }
+            }
+            result.innerHTML = changeTable(searchResult);
+        }
+        
+        function sortByabc(aTozOrzToa) {
+            var idAndAToZ = [];
+            for (var i = 0; i < allText2DArray.length; i++) {
+                idAndAToZ[i] = allText2DArray[i][1];
+            }
+            idAndAToZ.sort();
+            for (var i = 0; i < allText2DArray.length; i++) {
+                for (var i2 = 0; i2 < allText2DArray.length; i2++) {
+                    if (idAndAToZ[i] === allText2DArray[i2][1]) {
+                        idAndAToZ[i] = (allText2DArray[i2][0] + "-||-" + allText2DArray[i2][1]).split("-||-");
+                        break;
+                    }
+                }
+            }
+            for (var i = 0; i < idAndAToZ.length; i++) {
+                idAndAToZ[i] = idAndAToZ[i][0]
+            }
+            if (aTozOrzToa == 1) {
+                idAndAToZ.reverse();
+            }
+            result.innerHTML = changeTable(idAndAToZ);
+        }
+        
+        function sortByPrice(lowestFirst) {
+            var temp = new Array;
+            var idAndPrice = [];
+            for (var i = 0; i < allText2DArray.length; i++) {
+                idAndPrice[i] = (allText2DArray[i][0] + " " + allText2DArray[i][5]).split(" ")
+            }
+            for (var bubble = 0; bubble < idAndPrice.length; bubble++) {
+                for (var compare = 0; compare < idAndPrice.length - 1; compare++) {
+                    if (parseFloat(idAndPrice[compare][1]) < parseFloat(idAndPrice[compare + 1][1])) {
+                        temp[0] = idAndPrice[compare][0];
+                        temp[1] = idAndPrice[compare][1];
+                        idAndPrice[compare][0] = idAndPrice[compare + 1][0];
+                        idAndPrice[compare][1] = idAndPrice[compare + 1][1];
+                        idAndPrice[compare + 1][0] = temp[0];
+                        idAndPrice[compare + 1][1] = temp[1];
+                    }
+                }
+            }
+            for (var i = 0; i < idAndPrice.length; i++) {
+                idAndPrice[i] = idAndPrice[i][0]
+            }
+            if (lowestFirst == 1) {
+                idAndPrice.reverse();
+            }
+            result.innerHTML = changeTable(idAndPrice)
+        }
+        
+        function searchthings(){
+            var count = 0;
+            var searchResult = new Array;
+            for (var i = 0; i < allText2DArray.length; i++) {
+                for (var i2 = 0; i2 < 4; i2++) {
+                    try {
+                        if(allText2DArray[i][i2 + 1].includes(search.value)) {
+                            searchResult[count] = allText2DArray[i][0];
+                            count++;
+                        }
+                    } catch (e) {
+                        break;
+                    }
+                }
+            }
+            result.innerHTML = changeTable(Array.from(new Set(searchResult)));   
+        }
+        
+        function changeTable(itemCodes) {
+            var stringTable = "";
+            var items = JSON.parse(sessionStorage.getItem("ALLSTUFF"));
+            for (var row = 0; row < itemCodes.length; row++) {
+                stringTable = stringTable + "<tr style=\"background: rgba(255, 255, 255, 0.3);\">";
+                for (var col = 0; col < 4; col++) {
+                    switch (col) {
+                        case 0:
+		                    stringTable = stringTable + "<td style=\"width: 250px; text-align: center;\">";
+                            stringTable = stringTable + "<img class=\"inputs\" src=\"Website/" + items[itemCodes[row] - 1][6] + "\"/><br>";
+                            stringTable = stringTable + "<p>Category : " + items[itemCodes[row] - 1][2] + "<p/>";
+                            stringTable = stringTable + "<p>By : " + items[itemCodes[row] - 1][3] + "</p>";
+                            break;
+						case 1:
+		              		stringTable = stringTable + "<td style=\"width: 250px\">";
+                            stringTable = stringTable + "<h2>" + items[itemCodes[row] - 1][1] + "</h2>";
+							break;
+                        case 2: 
+		                    stringTable = stringTable + "<td style=\"width: 1000px\">";				
+                            stringTable = stringTable + "<h3>" + items[itemCodes[row] - 1][4] + "</h3>";
+                            break;
+                        case 3:
+		                    stringTable = stringTable + "<td>";
+                            stringTable = stringTable + "<div id=\"" + items[itemCodes[row] - 1][0] + "\" class=\"buy\" onClick=\"addToCart(this.id)\">"
+                            stringTable = stringTable + "<p class=\"price shade\">Price : $" + items[itemCodes[row] - 1][5] + "</p>";
+                            stringTable = stringTable + "<div class=\"addToCart\">ADD TO CART</div>";
+                            stringTable = stringTable + "</div>"
+                            break;
+						}
+						stringTable = stringTable + "</td>";
+					}	
+                stringTable = stringTable + "</tr>";
+            }
+            return stringTable; 
+        }
+        
+        var selectBarSize = 1000;
+        function changePadding() {
+            if (window.innerWidth - 600 < selectBarSize){
+                document.getElementById("selectionBar").style.padding = "0 50px";
+                document.getElementById("result").style.margin = "0 50px";
+                
+            } else {
+                document.getElementById("selectionBar").style.padding = "0 300px";
+                document.getElementById("result").style.margin = "0 300px";
+            }
+        }
+        
+        function addToCart(id) {
+            cart[cart.length] = id;
+            sessionStorage.setItem("Cart", JSON.stringify(cart));
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            readTextFile();
+            getCads();
+            addcategories();
+            changePadding();
+            defult();
+            search = document.getElementById("searchBar");
+            search.addEventListener("input", searchthings);
+        }, false);
+        
+    </script>
+    
+</html>

@@ -1,0 +1,51 @@
+body {
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+#boughtStuff {
+    margin: 0px 300px;
+}
+
+td {
+	text-align: left;
+	height: 50px;
+}
+
+.Logo {
+	display: block;
+    margin: 0 auto;	
+}
+
+.CartL {
+	display: block;
+	margin: 0 auto;
+}
+
+.removetd {
+    text-align: center;
+}
+
+#buyNow {
+    display: inline;
+    text-align: center;
+}
+
+#buyNow:hover {
+    cursor: pointer;
+}
+
+.remove {
+    border-style: dashed;
+    border-radius: 2px;
+    border-width: thin;
+    background: #444444;
+    color: white;
+    padding: 5px;
+}
+
+.remove:hover {
+    cursor: pointer;
+}
